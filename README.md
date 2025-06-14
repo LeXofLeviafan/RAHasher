@@ -1,13 +1,10 @@
-# RALibretro
+# RAHasher
 
-RALibretro is a multi-emulator that can be used to develop RetroAchievements and, of course, earn them.
+RAHasher is a CLI utility for verifying ROM checksums [with hashing methods used by RetroAchievements](https://docs.retroachievements.org/developer-docs/game-identification.html).
 
-The "multi-emulation" feature is only possible because it uses [libretro](https://github.com/libretro/) cores to do the actual emulation. What RALibretro does is to connect the emulation to the tools used to create RetroAchievements.
+_(It's a copy of the same utility provided by [RALibretro](https://github.com/RetroAchievements/RALibretro), but with a bit more convenient CLI.)_
 
-The integration with RetroAchievements.org site is done by the [RAIntegration](https://github.com/RetroAchievements/RAIntegration).
-
-
-## Building RALibretro with MSYS2/Makefile
+## Building RAHasher with MSYS2/Makefile
 
 ### Install MSYS2
 
@@ -25,14 +22,14 @@ $ pacman -S make git zip mingw-w64-i686-gcc mingw-w64-i686-SDL2 mingw-w64-i686-g
 ### Clone the repo
 
 ```
-$ git clone --recursive --depth 1 https://github.com/RetroAchievements/RALibretro.git
+$ git clone --recursive --depth 1 https://github.com/LeXofLeviafan/RAHasher.git
 ```
 
 ### Build
 
 ```
-$ cd RALibretro
-$ make
+$ cd RAHasher
+$ make -f Makefile.RAHasher HAVE_CHD=1
 ```
 
 **NOTE**: use `make` for a release build or `make DEBUG=1` for a debug build. Don't forget to run `make clean` first if switching between a release build and a debug build.
@@ -42,21 +39,32 @@ $ make
 ### Clone the repo
 
 ```
-> git clone --recursive --depth 1 https://github.com/RetroAchievements/RALibretro.git
+> git clone --recursive --depth 1 https://github.com/LeXofLeviafan/RAHasher.git
 ```
 
 ### Build
 
-Load `RALibretro.sln` in Visual Studio and build it.
+Load `RALibretro.sln` in Visual Studio and build it (specifically the `RAHasher` target).
 
 ## Command Line Arguments
 
 Argument|Description
 -|-
--c [--core]|the core's name, e.g. `--core picodrive_libretro`
--s [--system]|the system id, see ConsoleID in [RAInterface/RA_Consoles.h](https://github.com/RetroAchievements/RAInterface/blob/master/RA_Consoles.h), e.g. `--system 1`
--g [--game]|full path to the game's file, e.g. `--game "C:\ROMS\GEN\Demons Of Asteborg Demo.gen"`
+-v|(optional) enables verbose messages for debugging
+-s systempath|(optional) specifies where supplementary files are stored (typically a path to RetroArch/system)
+system|specifies the system key or id associated to the game (which hash algorithm to use)
+filepath|specifies the path to the game file (file may include wildcards, path may not)
 
-In order to run a game on startup, provide the core, system and game, e.g.:
+I.e., in order to find out what checksum RA would assign to a NES game file, you can invoke the program like this:
+```bat
+RAHasher.exe NES "C:\ROMS\NES\Alwa's Awakening 8-bit edition.nes"
+```
+You can also pass `?` as the system key; in which case RAHasher will attempt to detect the system based on ROM file extension. (Note: equivalent "system ID" number is `91`.)
 
-`RALibretro.exe --core picodrive_libretro --system 1 --game "C:\ROMS\GEN\Demons Of Asteborg Demo.gen"`
+Additionally, you can pass multiple filenames and/or specify it a glob template (with `*`/`?` wildcards). Note that wildcards are only allowed in _filename itself_ (not in the path), and that system detection is not allowed in multiple files mode.
+
+Finally, the full list of valid console keys/IDs will be printed along with usage info if you run RAHasher without arguments:
+```bat
+RAHasher.exe
+```
+The list ordering matches RetroAchievements website menu. (Also, system keys match short names from [RetroAchievents game lists](https://retroachievements.org/games), sans whitespace.)

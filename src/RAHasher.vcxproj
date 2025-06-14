@@ -63,6 +63,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>$(ProjectDir)..\etc\MakeGitCpp.bat</Command>
+    </PreBuildEvent>
     <CustomBuildStep>
       <Command>copy /b/y $(TargetPath) $(SolutionDir)\bin</Command>
     </CustomBuildStep>
@@ -88,6 +91,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>$(ProjectDir)..\etc\MakeGitCpp.bat</Command>
+    </PreBuildEvent>
     <CustomBuildStep>
       <Command>copy /b/y  $(TargetPath) $(SolutionDir)\bin64</Command>
     </CustomBuildStep>
@@ -118,6 +124,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>$(ProjectDir)..\etc\MakeGitCpp.bat</Command>
+    </PreBuildEvent>
     <CustomBuildStep>
       <Command>copy /b/y $(TargetPath) $(SolutionDir)\bin</Command>
     </CustomBuildStep>
@@ -147,6 +156,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>$(ProjectDir)..\etc\MakeGitCpp.bat</Command>
+    </PreBuildEvent>
     <CustomBuildStep>
       <Command>copy /b/y  $(TargetPath) $(SolutionDir)\bin64</Command>
     </CustomBuildStep>
