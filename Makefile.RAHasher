@@ -64,7 +64,7 @@ src/Git.cpp: etc/Git.cpp.template FORCE
 
 zip: $(OUTDIR)/RAHasher$(EXE)
 	rm -f $(OUTDIR)/RAHasher-*.zip RAHasher-*.zip
-	zip -9 RAHasher-$(ARCH)-$(KERNEL)-`git describe --tags | sed s/\-.*//g | tr -d "\n"`.zip $(OUTDIR)/RAHasher$(EXE)
+	zip -9 --junk-paths RAHasher-$(ARCH)-$(KERNEL)-`git describe --tags | sed s/\-.*//g | tr -d "\n"`.zip $(OUTDIR)/RAHasher$(EXE)
 
 clean:
 	rm -f $(OUTDIR)/RAHasher$(EXE) $(OBJS) $(OUTDIR)/RAHasher*.zip RAHasher*.zip
