@@ -864,6 +864,7 @@ bool Application::loadCore(const std::string& coreName)
   case RC_CONSOLE_APPLE_II:
   case RC_CONSOLE_ATARI_ST:
   case RC_CONSOLE_COMMODORE_64:
+  case RC_CONSOLE_FAMICOM_DISK_SYSTEM:
   case RC_CONSOLE_MS_DOS:
   case RC_CONSOLE_MSX:
   case RC_CONSOLE_NINTENDO: // FDS
@@ -1872,8 +1873,11 @@ void Application::saveState(unsigned ndx)
   snprintf(message, sizeof(message), "Saved state %u", ndx);
   _video.showMessage(message, 60);
 
-  _validSlots |= 1 << ndx;
-  enableSlots();
+  if (ndx <= 10)
+  {
+    _validSlots |= 1 << ndx;
+    enableSlots();
+  }
 }
 
 void Application::saveState()
@@ -1906,7 +1910,12 @@ void Application::loadState(unsigned ndx)
     return;
   }
 
-  if ((_validSlots & (1 << ndx)) == 0)
+  if (ndx > 10)
+  {
+    // we don't pre-validate the existance of save states that aren't displayed in the menu
+    // also, we can't track more than 32 states that way and allow up to 99 numbered states
+  }
+  else if ((_validSlots & (1 << ndx)) == 0)
   {
     return;
   }
