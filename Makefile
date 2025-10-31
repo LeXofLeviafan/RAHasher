@@ -119,6 +119,8 @@ src/Memory.o: CFLAGS += -I./src/libretro
 
 src/Hash.o: CFLAGS += -I./src/libretro
 
+src/RAInterface/RA_Interface.o: CXXFLAGS += -DRA_NOPROGRESS
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
