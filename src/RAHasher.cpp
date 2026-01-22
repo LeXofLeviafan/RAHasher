@@ -1,7 +1,7 @@
 // RAHasher.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include "Git.h"
+#include "RA_BuildVer.h"
 #include "Util.h"
 
 #include <rcheevos/include/rc_hash.h>
@@ -14,8 +14,11 @@
  #define WIN32_LEAN_AND_MEAN
  #include <Windows.h>
 #elif defined(__unix__)
- #include <glob.h>
- #include <sys/stat.h>
+ #define IGNORE_WILDCARDS /* expect unix to do the globbing before calling us */
+ #ifndef IGNORE_WILDCARDS
+  #include <glob.h>
+  #include <sys/stat.h>
+ #endif
 #else
  #include <dirent.h>
  #include <fnmatch.h>
@@ -30,7 +33,7 @@ void   initHash3DS(const std::string& systemDir); /* in Hash3DS.cpp */
 
 static void usage(const char* appname)
 {
-  printf("RAHasher %s\n====================\n", git::getReleaseVersion());
+  printf("RAHasher %s\n====================\n", RA_LIBRETRO_VERSION_SHORT);
 
   printf("Usage: %s [-v] [-s systempath] systemid filepath\n", util::fileName(appname).c_str());
   printf("\n");
@@ -88,7 +91,7 @@ static void* rhash_file_open(const char* path)
 static int process_file(int consoleId, const std::string& file)
 {
   char hash[33];
-  int result = 1;
+  int count = 0;
 
   std::string filePath = util::fullPath(file);
   std::string ext = util::extension(file);
@@ -102,7 +105,10 @@ static int process_file(int consoleId, const std::string& file)
     if (data)
     {
       if (rc_hash_generate_from_buffer(hash, consoleId, (uint8_t*)data, size))
+      {
         printf("%s", hash);
+        count = 1;
+      }
 
       free(data);
     }
@@ -134,18 +140,26 @@ static int process_file(int consoleId, const std::string& file)
       rc_hash_iterator iterator;
       rc_hash_initialize_iterator(&iterator, filePath.c_str(), NULL, 0);
       while (rc_hash_iterate(hash, &iterator))
+      {
         printf("%s", hash);
+        count++;
+      }
       rc_hash_destroy_iterator(&iterator);
     }
     else
     {
       if (rc_hash_generate_from_file(hash, consoleId, filePath.c_str()))
+      {
         printf("%s", hash);
+        count++;
+      }
     }
   }
 
-  return result;
+  return count;
 }
+
+#ifndef IGNORE_WILDCARDS
 
 static int process_iterated_file(int console_id, const std::string& file)
 {
@@ -234,6 +248,8 @@ static int process_files(int consoleId, const std::string& pattern)
   return count;
 }
 
+#endif /* IGNORE_WILDCARDS */
+
 int main(int argc, char* argv[])
 {
   int consoleId = 0;
@@ -264,14 +280,14 @@ int main(int argc, char* argv[])
   if (argi + 2 > argc)
   {
     usage(argv[0]);
-    return 1;
+    return EXIT_FAILURE;
   }
 
   consoleId = atoi(argv[argi++]);
   if (consoleId == 0)
   {
     usage(argv[0]);
-    return 1;
+    return EXIT_FAILURE;
   }
 
   logger.reset(new StdErrLogger);
@@ -285,11 +301,12 @@ int main(int argc, char* argv[])
     if (consoleId > RC_CONSOLE_MAX)
     {
       printf("Specific console must be specified when processing multiple files\n");
-      return 0;
+      return EXIT_FAILURE;
     }
 
     singleFile = 0;
   }
+#ifndef IGNORE_WILDCARDS
   else
   {
     std::string file = argv[argi];
@@ -298,12 +315,13 @@ int main(int argc, char* argv[])
       if (consoleId > RC_CONSOLE_MAX)
       {
         printf("Specific console must be specified when using wildcards\n");
-        return 0;
+        return EXIT_FAILURE;
       }
 
       singleFile = 0;
     }
   }
+#endif
 
   if (!singleFile)
   {
@@ -315,24 +333,26 @@ int main(int argc, char* argv[])
   {
     std::string file = argv[argi++];
 
+#ifndef IGNORE_WILDCARDS
     if (file.find('*') != std::string::npos || file.find('?') != std::string::npos)
     {
       if (!process_files(consoleId, file))
-        return 0;
+        return EXIT_FAILURE;
     }
     else
+#endif
     {
       int result = process_file(consoleId, file);
 
       if (singleFile)
-	printf("\n");
+        printf("\n");
       else
         printf(" %s\n", util::fileNameWithExtension(file).c_str());
 
       if (!result)
-        return result;
+        return EXIT_FAILURE;
     }
   }
 
-  return 1;
+  return EXIT_SUCCESS;
 }

@@ -18,7 +18,7 @@ along with RALibretro.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Application.h"
-#include "Git.h"
+#include "RA_BuildVer.h"
 
 #include <SDL_syswm.h>
 
@@ -109,11 +109,11 @@ bool Application::init(const char* title, int width, int height)
   inited = kLoggerInited;
 
 #if defined(_M_X64) || defined(__amd64__)
-  _logger.info(TAG "RALibretro version %s-x64 starting", git::getReleaseVersion());
+  _logger.info(TAG "RALibretro version %s-x64 starting", RA_LIBRETRO_VERSION);
 #else
-  _logger.info(TAG "RALibretro version %s starting", git::getReleaseVersion());
+  _logger.info(TAG "RALibretro version %s starting", RA_LIBRETRO_VERSION);
 #endif
-  _logger.info(TAG "RALibretro commit hash is %s", git::getFullHash());
+  _logger.info(TAG "RALibretro commit hash is %s", RA_LIBRETRO_VERSION_COMMIT_HASH);
 
   {
     const time_t now_timet = time(0);
@@ -236,6 +236,7 @@ bool Application::init(const char* title, int width, int height)
   if (_audioDev == 0)
   {
     _logger.error(TAG "SDL_OpenAudioDevice: %s", SDL_GetError());
+    MessageBox(g_mainWindow, "No audio device found", "Initialization failed", MB_OK);
     goto error;
   }
 
@@ -2871,8 +2872,13 @@ bool Application::handleArgs(int argc, char* argv[])
   }
 
   if (!doesCoreSupportSystem(core, system)) {
-    std::string message = core + " core does not support system " + std::to_string(system);
-    
+    std::string message;
+
+    if (isKnownCore(core))
+      message = core + " core does not support system " + std::to_string(system);
+    else
+      message = "Unknown core: " + core;
+
     _logger.error(message.c_str());
 
     MessageBox(g_mainWindow, message.c_str(), "Failed to load game", MB_OK);
