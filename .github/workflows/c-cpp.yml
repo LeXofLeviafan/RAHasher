@@ -23,7 +23,7 @@ jobs:
         draft: true
 
   RAHasher-Win32:
-    runs-on: windows-2025
+    runs-on: windows-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -31,8 +31,6 @@ jobs:
         submodules: recursive
     - name: Install MSBuild
       uses: microsoft/setup-msbuild@v1.0.2
-    - name: Install Windows SDK 8.1
-      run: choco install windows-sdk-8.1
     - name: Build
       run: msbuild.exe RALibretro.sln -t:RAHasher -p:Configuration=Release -p:Platform=x86
     - name: Zip
@@ -46,7 +44,7 @@ jobs:
         files: RAHasher*.zip
 
   RAHasher-Win64:
-    runs-on: windows-2025
+    runs-on: windows-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -54,8 +52,6 @@ jobs:
         submodules: recursive
     - name: Install MSBuild
       uses: microsoft/setup-msbuild@v1.0.2
-    - name: Install Windows SDK 8.1
-      run: choco install windows-sdk-8.1
     - name: Build
       run: msbuild.exe RALibretro.sln -t:RAHasher -p:Configuration=Release -p:Platform=x64
     - name: Zip
