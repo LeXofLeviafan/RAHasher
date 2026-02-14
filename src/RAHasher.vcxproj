@@ -64,7 +64,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)..\etc\MakeGitCpp.bat</Command>
+      <Command>$(ProjectDir)RAInterface\MakeBuildVer.bat $(ProjectDir)\RA_BuildVer.h "" RA_LIBRETRO</Command>
     </PreBuildEvent>
     <CustomBuildStep>
       <Command>copy /b/y $(TargetPath) $(SolutionDir)\bin</Command>
@@ -92,7 +92,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)..\etc\MakeGitCpp.bat</Command>
+      <Command>$(ProjectDir)RAInterface\MakeBuildVer.bat $(ProjectDir)\RA_BuildVer.h "" RA_LIBRETRO</Command>
     </PreBuildEvent>
     <CustomBuildStep>
       <Command>copy /b/y  "$(TargetPath)" "$(SolutionDir)\bin64"</Command>
@@ -125,7 +125,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)..\etc\MakeGitCpp.bat</Command>
+      <Command>$(ProjectDir)RAInterface\MakeBuildVer.bat $(ProjectDir)\RA_BuildVer.h "" RA_LIBRETRO</Command>
     </PreBuildEvent>
     <CustomBuildStep>
       <Command>copy /b/y $(TargetPath) $(SolutionDir)\bin</Command>
@@ -157,7 +157,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)..\etc\MakeGitCpp.bat</Command>
+      <Command>$(ProjectDir)RAInterface\MakeBuildVer.bat $(ProjectDir)\RA_BuildVer.h "" RA_LIBRETRO</Command>
     </PreBuildEvent>
     <CustomBuildStep>
       <Command>copy /b/y  $(TargetPath) $(SolutionDir)\bin64</Command>
